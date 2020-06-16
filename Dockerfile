@@ -33,8 +33,6 @@ RUN yum install -y --enablerepo=elasticsearch elasticsearch
 RUN yum install -y python-pip
 RUN python -m pip install --upgrade pip
 RUN pip install supervisor
-
 COPY supervisord.conf /etc/supervisord.conf
-RUN yum install -y mlocate
 
 CMD ["supervisord", "-c", "/etc/supervisord.conf"]
