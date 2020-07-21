@@ -26,7 +26,10 @@ RUN yum install -y rubygems
 RUN gem install fluentd --no-document
 RUN fluentd --setup /etc/fluent
 RUN fluent-gem install fluent-plugin-elasticsearch
+RUN fluent-gem install fluent-plugin-multi-format-parser
+RUN fluent-gem install fluent-plugin-rewrite-tag-filter
 RUN gem install oj
+
 
 # Install elasticsearch
 COPY elasticsearch.repo /etc/yum.repos.d/elasticsearch.repo
