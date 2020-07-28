@@ -41,6 +41,7 @@ RUN mkdir /etc/elasticsearch/buffers
 RUN yum install -y python-pip
 RUN python -m pip install --upgrade pip
 RUN pip install supervisor
+RUN pip install elasticsearch
 
 COPY fluent.conf /etc/fluent/fluent.conf
 COPY supervisord.conf /etc/supervisord.conf
