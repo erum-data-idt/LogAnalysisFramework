@@ -1,0 +1,25 @@
+2020-08-17 15:24:54,573 CRIT Supervisor is running as root.  Privileges were not dropped because no user is specified in the config file.  If you intend to run as root, you can set user=root in the config file to avoid this message.
+2020-08-17 15:24:54,589 INFO RPC interface 'supervisor' initialized
+2020-08-17 15:24:54,589 CRIT Server 'unix_http_server' running without any HTTP authentication checking
+2020-08-17 15:24:54,590 INFO supervisord started with pid 1
+2020-08-17 15:24:55,593 INFO spawned: 'elasticsearch' with pid 8
+2020-08-17 15:24:55,595 INFO spawned: 'fluentd' with pid 9
+2020-08-17 15:24:56,596 INFO success: elasticsearch entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2020-08-17 15:24:56,597 INFO success: fluentd entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2020-08-17 15:24:57,524 INFO exited: elasticsearch (exit status 1; not expected)
+2020-08-17 15:24:58,527 INFO spawned: 'elasticsearch' with pid 77
+2020-08-17 15:24:58,707 INFO exited: elasticsearch (exit status 1; not expected)
+2020-08-17 15:24:59,710 INFO spawned: 'elasticsearch' with pid 150
+2020-08-17 15:24:59,889 INFO exited: elasticsearch (exit status 1; not expected)
+2020-08-17 15:25:01,893 INFO spawned: 'elasticsearch' with pid 216
+2020-08-17 15:25:02,076 INFO exited: elasticsearch (exit status 1; not expected)
+2020-08-17 15:25:05,082 INFO spawned: 'elasticsearch' with pid 282
+2020-08-17 15:25:05,264 INFO exited: elasticsearch (exit status 1; not expected)
+2020-08-17 15:25:06,266 INFO gave up: elasticsearch entered FATAL state, too many start retries too quickly
+2020-08-17 15:27:01,759 WARN received SIGINT indicating exit request
+2020-08-17 15:27:01,759 INFO waiting for fluentd to die
+2020-08-17 15:27:04,763 INFO waiting for fluentd to die
+2020-08-17 15:27:07,768 INFO waiting for fluentd to die
+2020-08-17 15:27:10,772 INFO waiting for fluentd to die
+2020-08-17 15:27:11,773 WARN killing 'fluentd' (9) with SIGKILL
+2020-08-17 15:27:11,780 INFO stopped: fluentd (terminated by SIGKILL)

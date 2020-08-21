@@ -9,32 +9,24 @@ from builtins import object
 # @version $Id: trfValidation.py 782012 2016-11-03 01:45:33Z uworlika $
 
 import os
+import json
+import os.path as path
 from elasticsearch import Elasticsearch
+from myPackage.trfLogger import stdLogLevels
 
 import logging
 msg = logging.getLogger(__name__)
-
-stdLogLevels = {'DEBUG' : logging.DEBUG,
-'VERBOSE' : logging.DEBUG,
-'INFO' : logging.INFO,
-'WARNING' : logging.WARNING,
-'ERROR' : logging.ERROR,
-'CRITICAL' : logging.CRITICAL,
-'FATAL' : logging.CRITICAL,
-'CATASTROPHE' : logging.CRITICAL+10,  # Special prority level to ensure an error is
-                                      # elevated to be the exitMsg
-}
-
 
 ## @brief A class holding report information from an ES index
 #  This is pretty much a virtual class, fill in the specific methods
 #  when you know what type of logfile you are dealing with
 class logFileReport(object):
-    def __init__(self, index=None, body={}, msgLimit=10):
+    def __init__(self, index=None, body={}, msgLimit=100, msgDetailLevel=stdLogLevels['ERROR']):
 
         self._index = index
         self._body = body
         self._msgLimit = msgLimit
+        self._msgDetails = msgDetailLevel
 
         if index:
             self.searchIndex()
@@ -63,11 +55,11 @@ class userLogFileReport(logFileReport):
     #  @param logfile Logfile (or list of logfiles) to scan
     #  @param substepName Name of the substep executor, that has requested this log scan
     #  @param msgLimit The number of messages in each category on which a
-    def __init__(self, index, body, msgLimit):
+    def __init__(self, index, body, msgLimit, msgDetailLevel=stdLogLevels['ERROR']):
 
         self.resetReport()
-        
-        super(userLogFileReport, self).__init__(index, body, msgLimit)
+
+        super(userLogFileReport, self).__init__(index, body, msgLimit, msgDetailLevel)
 
     ## Produce a python dictionary summary from querying the index for inclusion
     #  in the job report
@@ -94,7 +86,7 @@ class userLogFileReport(logFileReport):
             # List of dicts {'message': errMsg, 'firstLine': lineNo, 'count': N}
 
 
-    def findFile(pathvar, fname):
+    def findFile(self,pathvar, fname):
         # First see if the file already includes a path.
         msg.debug('Finding full path for {fileName} in path {path}'.format(
             fileName = fname,
@@ -124,17 +116,17 @@ class userLogFileReport(logFileReport):
                 msg.debug('Opened error file {0} from here: {1}'.format(errorfile, fullName))
 
                 for line in errorFileHandle:
-                    if line.startswith('#') or line == '' or line =='\n':
-                        continue
-                    line = line.rstrip('\n')
-                    linesList.append(line)
+                    #line = line.rstrip('\n')
+                    linesList.append(json.loads(line))
         except OSError as e:
             msg.warning('Failed to open error file {0}: {1}'.format(fullName, e))
         return linesList
 
     def searchIndex(self, resetReport=False):
+        #add a try statement here
         es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
         nonStandardErrorsList = self.errorFileHandler('nonStandardErrors.db')
+        print(nonStandardErrorsList)
 
         if resetReport:
             self.resetReport()
@@ -143,7 +135,7 @@ class userLogFileReport(logFileReport):
         results = {}
         seenNonStandardError = ''
         try:
-            results = es.search(index=self._index, body=self._body)
+            results = es.search(index=self._index, size = 1000, body=self._body)
         except IOError as e:
             msg.error('Failed to open log file index {0}: {1:s}'.format(self._index, e))
             # Return this as a small report
@@ -153,10 +145,13 @@ class userLogFileReport(logFileReport):
         ## Loop over the hits returned by the search
         for hit in results['hits']['hits']:
             if 'line' in hit["_source"]:# if the record is unstructured, match whole line
-                if any(hit["_source"]['line'] in l['line'] for l in nonStandardErrorsList):
-                    msg.warning('Loading error handler')
-                    #self.loadErrorHandler(l['errorHandler'])
-                    continue
+                #if any(hit["_source"]['line'] in l['line'] for l in nonStandardErrorsList):
+                for l in nonStandardErrorsList:
+                    if hit["_source"]['line'] in l['line']:
+                        msg.warning('Loading error handler')
+                        #self.loadErrorHandler(l['errorHandler'])
+                        print("message: {} handler: {}".format(hit["_source"]['line'], l['errorHandler']))
+                        continue
                 msg.debug('Non-standard line in %s: %s' % (self._index, hit["_source"]['line']))
                 self._levelCounter['UNKNOWN'] += 1
                 continue
@@ -166,7 +161,12 @@ class userLogFileReport(logFileReport):
             fields = {}
             for matchKey in ('service', 'level', 'message'):#or, this can be an argument
                 fields[matchKey] = hit["_source"][matchKey]
-            msg.debug('Line parsed as: {0}'.format(fields))
+            #msg.debug('Line parsed as: {0}'.format(fields))
+            msg.info('Line parsed as: {0}'.format(fields))
+            #print('Line parsed as: {0}'.format(fields))
+
+            # this nees to be set to the original position in the log file of the record
+            lineCounter = 1
 
             # Count this error
             self._levelCounter[fields['level']] += 1
@@ -177,17 +177,19 @@ class userLogFileReport(logFileReport):
                 if self._levelCounter[fields['level']] <= self._msgLimit:
                     detailsHandled = False
                     for seenError in self._errorDetails[fields['level']]:
-                        if seenError['message'] == line:
+                        if seenError['message'] == fields['message']:
                             seenError['count'] += 1
                             detailsHandled = True
                             break
                     if detailsHandled is False:
-                        self._errorDetails[fields['level']].append({'message': line, 'firstLine': lineCounter, 'count': 1})
+                        self._errorDetails[fields['level']].append({'message': fields['message'], 'firstLine': lineCounter, 'count': 1})
                 elif self._levelCounter[fields['level']] == self._msgLimit + 1:
                     msg.warning("Found message number {0} at level {1} - this and further messages will be supressed from the report".format(self._levelCounter[fields['level']], fields['level']))
                 else:
                     # Overcounted
                     pass
+        reporte = self.python
+        print('reporte {}'.format(reporte))
 
 
     ## Return the worst error found from querying the index (first error of the most serious type)
@@ -225,3 +227,4 @@ class userLogFileReport(logFileReport):
 
 #does the position of a message in the log file map to a position in the index? Does it get properly assigned
 # in the error dictionaries?
+# investigate the reason for using property

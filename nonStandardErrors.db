@@ -1,0 +1,2 @@
+{"line": "terminate called after throwing an instance of std::bad_alloc", "errorHandler": "badAllocExceptionParser"}
+{"line": "15:54:17 InDetJobProperties::setupDefaults():  jobproperties.Beam.beamType() is collisions bunch spacing is 25", "errorHandler": "PrintExceptionParser"}

@@ -42,10 +42,20 @@ RUN yum install -y python-pip
 RUN python -m pip install --upgrade pip
 RUN pip install supervisor
 RUN pip install elasticsearch
+RUN pip install future
 
 COPY fluent.conf /etc/fluent/fluent.conf
 COPY supervisord.conf /etc/supervisord.conf
 COPY elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
 COPY log.RAWtoESD /tmp/log.RAWtoESD
+COPY log.HITtoRDO /tmp/log.HITtoRDO
+
+#COPY python/trfValidation.py /root/trfValidation.py
+#COPY python/trfLogger.py /root/trfLogger.py
+COPY scripts/scanner.py /root/scanner.py
+
+COPY myPackage /root/myPackage
+
+COPY nonStandardErrors.db /root/nonStandardErrors.db
 
 CMD ["supervisord", "-c", "/etc/supervisord.conf"]
