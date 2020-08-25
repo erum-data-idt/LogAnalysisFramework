@@ -123,10 +123,10 @@ class userLogFileReport(logFileReport):
         return linesList
 
     def searchIndex(self, resetReport=False):
-       try: 
-           es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
-       except IOError as e: 
-           msg.error('Failed to establish a connection to ElasticSearch server: {0}'.format(e))
+        try: 
+            es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
+        except IOError as e: 
+            msg.error('Failed to establish a connection to ElasticSearch server: {0}'.format(e))
 
         nonStandardErrorsList = self.errorFileHandler('nonStandardErrors.db')
         msg.debug('List of unstructured errors: {0}'.format(nonStandardErrorsList))
