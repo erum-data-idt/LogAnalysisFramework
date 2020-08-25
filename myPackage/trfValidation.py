@@ -129,7 +129,7 @@ class userLogFileReport(logFileReport):
            msg.error('Failed to establish a connection to ElasticSearch server: {0}'.format(e))
 
         nonStandardErrorsList = self.errorFileHandler('nonStandardErrors.db')
-        print(nonStandardErrorsList)
+        msg.debug('List of unstructured errors: {0}'.format(nonStandardErrorsList))
 
         if resetReport:
             self.resetReport()
