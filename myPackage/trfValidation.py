@@ -21,7 +21,7 @@ msg = logging.getLogger(__name__)
 #  This is pretty much a virtual class, fill in the specific methods
 #  when you know what type of logfile you are dealing with
 class logFileReport(object):
-    def __init__(self, index=None, body={}, msgLimit=100, msgDetailLevel=stdLogLevels['ERROR']):
+    def __init__(self, index=None, body={}, msgLimit=100, msgDetailLevel=stdLogLevels['WARNING']):
 
         self._index = index
         self._body = body
@@ -55,7 +55,7 @@ class userLogFileReport(logFileReport):
     #  @param logfile Logfile (or list of logfiles) to scan
     #  @param substepName Name of the substep executor, that has requested this log scan
     #  @param msgLimit The number of messages in each category on which a
-    def __init__(self, index, body, msgLimit, msgDetailLevel=stdLogLevels['ERROR']):
+    def __init__(self, index, body, msgLimit, msgDetailLevel=stdLogLevels['WARNING']):
 
         self.resetReport()
 
@@ -85,13 +85,10 @@ class userLogFileReport(logFileReport):
             # Format:
             # List of dicts {'message': errMsg, 'firstLine': lineNo, 'count': N}
 
-
+    # this needs work, return something that when the file is missing, try open will go to the exception
     def findFile(self,pathvar, fname):
         # First see if the file already includes a path.
-        msg.debug('Finding full path for {fileName} in path {path}'.format(
-            fileName = fname,
-            path = pathvar
-        ))
+        msg.debug('Finding full path for {0} in path {1}'.format(fname, pathvar))
         if fname.startswith('/'):
             return(fname)
 
@@ -123,13 +120,10 @@ class userLogFileReport(logFileReport):
         return linesList
 
     def searchIndex(self, resetReport=False):
-        try: 
-            es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
-        except IOError as e: 
-            msg.error('Failed to establish a connection to ElasticSearch server: {0}'.format(e))
+        es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
 
         nonStandardErrorsList = self.errorFileHandler('nonStandardErrors.db')
-        msg.debug('List of unstructured errors: {0}'.format(nonStandardErrorsList))
+        msg.debug('List of unstructured messages: {0}'.format(nonStandardErrorsList))
 
         if resetReport:
             self.resetReport()
@@ -146,16 +140,16 @@ class userLogFileReport(logFileReport):
             self._errorDetails['ERROR'] = {'message': str(e), 'firstLine': 0, 'count': 1}
             return
         ## Loop over the hits returned by the search
+        # this needs work, to be set to the original position in the log file of the record
+        lineCounter = 0
         for hit in results['hits']['hits']:
             if 'line' in hit["_source"]:# if the record is unstructured, match whole line
-                #if any(hit["_source"]['line'] in l['line'] for l in nonStandardErrorsList):
                 for l in nonStandardErrorsList:
                     if hit["_source"]['line'] in l['line']:
-                        msg.warning('Loading error handler')
+                        msg.debug('Unstructured message in %s: %s' % (self._index, hit["_source"]['line']))
+                        msg.warning('Loading message handler: {0}'.format(l['errorHandler']))
                         #self.loadErrorHandler(l['errorHandler'])
-                        print("message: {} handler: {}".format(hit["_source"]['line'], l['errorHandler']))
                         continue
-                msg.debug('Non-standard line in %s: %s' % (self._index, hit["_source"]['line']))
                 self._levelCounter['UNKNOWN'] += 1
                 continue
 
@@ -164,12 +158,10 @@ class userLogFileReport(logFileReport):
             fields = {}
             for matchKey in ('service', 'level', 'message'):#or, this can be an argument
                 fields[matchKey] = hit["_source"][matchKey]
-            #msg.debug('Line parsed as: {0}'.format(fields))
-            msg.info('Line parsed as: {0}'.format(fields))
-            #print('Line parsed as: {0}'.format(fields))
+            msg.debug('Structured message parsed as: {0}'.format(fields))
 
-            # this nees to be set to the original position in the log file of the record
-            lineCounter = 1
+            # this needs work, to be set to the original position in the log file of the record
+            lineCounter += 1
 
             # Count this error
             self._levelCounter[fields['level']] += 1
@@ -191,8 +183,6 @@ class userLogFileReport(logFileReport):
                 else:
                     # Overcounted
                     pass
-        reporte = self.python
-        print('reporte {}'.format(reporte))
 
 
     ## Return the worst error found from querying the index (first error of the most serious type)

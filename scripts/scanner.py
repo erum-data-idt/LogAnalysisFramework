@@ -22,7 +22,15 @@ def main():
     for arg in sys.argv[1:]:
         print arg
 
-    search=userLogFileReport('fluentd.log.matched', {"query": {"match" : {"level" : {"query" : "ERROR" }}}}, 100)
+    #search=userLogFileReport('fluentd.log.matched', {"query": {"match" : {"level" : {"query" : "ERROR" }}}}, 100)
+    search=userLogFileReport('fluentd.log.matched', {"query": {"bool" : {"should" : [{"match" : {"level" : "FATAL" }}, {"match" : {"level" : "CRITICAL" }}, {"match" : {"level" : "ERROR" }}, {"match" : {"level" : "WARNING" }}]}}}, 100)
+
+    reporte = search.python
+    print('reporte {}'.format(reporte))
+    worstError = search.worstError()
+    firstError = search.firstError(floor='WARNING')
+    print('worstError {}'.format(worstError))
+    print('firstError {}'.format(firstError))
 
 
 

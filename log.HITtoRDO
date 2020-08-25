@@ -101,6 +101,7 @@
 18:45:05  writeRIOPool :    ON    ON    ON    ON    ON    ON    ON    --    --    ON        ON    ON    ON    ON    ON    ON    ON    ON    ON    ON         ON    ON    --     ON    ON
 18:45:05 Py:Athena            INFO including file "Digitization/Digitization.py"
 18:45:05 Py:JobProperty ::    INFO The JobProperty InputFormat is blocked
+18:46:01 ToolSvc.PixelFi...  FATAL Mapping File: PixelCabling/Pixels_Atlas_IdMapping_Run2.dat not found!
 18:45:05 Py:Digitization   WARNING DetFlags already defined! This means DetFlags should have been fully configured already..
 18:45:05               : bpipe pixel   SCT   TRT   BCM   DBM Lucid   ZDC  ALFA   AFP FwdRegion    em   HEC  FCal  Tile   MDT   CSC   TGC   RPC  sTGC Micromegas Truth  LVL1 BField   FTK
 18:45:05           dcs :    ON    ON    ON    ON    ON    ON    ON    --    --    ON        ON    ON    ON    ON    ON    ON    ON    ON    ON    ON         ON    ON    --     ON    ON
@@ -2321,6 +2322,7 @@
 18:46:01 PixelCablingSvc      INFO PixelFillCablingData tool retrieved
 18:46:01 PathResolver      WARNING Could not locate PixelCabling/Pixels_Atlas_IdMapping_Run2.dat
 18:46:01 ToolSvc.PixelFi...  FATAL Mapping File: PixelCabling/Pixels_Atlas_IdMapping_Run2.dat not found!
+18:46:01 ToolSvc             ERROR Error initializing tool 'ToolSvc.PixelDigitizationTool'
 18:46:01 PixelCablingSvc     ERROR Filling pixel cabling from file "PixelCabling/Pixels_Atlas_IdMapping_Run2.dat" failed
 18:46:01 PixelCablingSvc     ERROR Filling pixel cabling from file "PixelCabling/Pixels_Atlas_IdMapping_Run2.dat" failed
 18:46:01 ServiceManager      ERROR Unable to initialize service "PixelCablingSvc"
