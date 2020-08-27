@@ -14,6 +14,7 @@ handler = logging.StreamHandler()
 msg.addHandler(handler)
 
 from myPackage.trfValidation import userLogFileReport
+from myPackage.trfReports import trfJobReport
 
 def main():
     """ Main program """
@@ -25,12 +26,14 @@ def main():
     #search=userLogFileReport('fluentd.log.matched', {"query": {"match" : {"level" : {"query" : "ERROR" }}}}, 100)
     search=userLogFileReport('fluentd.log.matched', {"query": {"bool" : {"should" : [{"match" : {"level" : "FATAL" }}, {"match" : {"level" : "CRITICAL" }}, {"match" : {"level" : "ERROR" }}, {"match" : {"level" : "WARNING" }}]}}}, 100)
 
+
+    jobReport=trfJobReport(search)
+    jobReport.writeJSONReport(filename='jobReport.json')
+
     reporte = search.python
     print('reporte {}'.format(reporte))
-    worstError = search.worstError()
-    firstError = search.firstError(floor='WARNING')
-    print('worstError {}'.format(worstError))
-    print('firstError {}'.format(firstError))
+    print('worstError {}'.format(search.worstError()))
+    print('firstError {}'.format(search.firstError(floor='WARNING')))
 
 
 

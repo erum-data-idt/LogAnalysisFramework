@@ -198,7 +198,7 @@ class userLogFileReport(logFileReport):
         else:
             firstError = None
 
-        return {'level': worstName, 'nLevel': worst, 'firstError': firstError}
+        return {'level': worstName, 'nLevel': worst, 'error': firstError}
 
 
     ## Return the first error found in the logfile above a certain loglevel
@@ -214,7 +214,7 @@ class userLogFileReport(logFileReport):
                 firstName = lvl
                 firstError = self._errorDetails[lvl][0]
 
-        return {'level': firstName, 'nLevel': firstLevel, 'firstError': firstError}
+        return {'level': firstName, 'nLevel': firstLevel, 'error': firstError}
 
 
 
