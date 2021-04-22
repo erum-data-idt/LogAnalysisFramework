@@ -15,9 +15,9 @@
 # Introduction
 
 Our goal is to develop a framework for the analysis of logs produced in user jobs, which can be easily deployed as an additional Docker layer on top of pre-existing containers used to execute a given payload. The requirements for selecting the components of a containerized log-analysis framework can be summarized as follows:
-The framework should have the least number of components
-The components should be light-weight, open-source projects widely used in industry
-Ease of process configuration and management. Unprivileged containers typically lack init systems, which require kernel functionality. It is important to avoid components that have complicated init-scripts handled by systemd or SysVinit.
+- The framework should have the least number of components
+- The components should be light-weight, open-source projects widely used in industry
+- Ease of process configuration and management. Unprivileged containers typically lack init systems, which require kernel functionality. It is important to avoid components that have complicated init-scripts handled by systemd or SysVinit.
 
 Our log-management framework consists of only two main components, fluentd and Elasticsearch, which are popular open-source projects with large support communities and simple configurations. A third light-weight component, supervisord, is added as a process manager started by the container's entry-point script. This complies with the design model for Docker containers as hosting a single service/process per container.
 
