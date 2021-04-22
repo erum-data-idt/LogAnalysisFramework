@@ -14,7 +14,7 @@
 
 # Introduction
 
-Log-analysis frameworks are based on the idea of events over time (timestamps). The requirements for selecting the components of a containerized log-analysis framework can be summarized as follows:
+Our goal is to develop a framework for the analysis of logs produced in user jobs, which can be easily deployed as an additional Docker layer on top of pre-existing containers used to execute a given payload. The requirements for selecting the components of a containerized log-analysis framework can be summarized as follows:
 The framework should have the least number of components
 The components should be light-weight, open-source projects widely used in industry
 Ease of process configuration and management. Unprivileged containers typically lack init systems, which require kernel functionality. It is important to avoid components that have complicated init-scripts handled by systemd or SysVinit.
@@ -127,8 +127,8 @@ Next, the location of the log file needs to be specified in the input plugin blo
   </parse>
 </source>
 ```
-Finally, the following sequence of commands need to be added to the original script or command executing the payload
+Finally, the following sequence of commands needs to be added to the original script or command executing the payload
 ```
 unset PYTHONPATH; unset PYTHONHOME; export PATH=/usr/sue/bin:/usr/local/sbin:/usr/local/bin:/ usr/sbin:/usr/bin:/sbin:/bin:$PATH; supervisord -c /usr/local/loganalysis/supervisord/etc/ supervisord.conf; sleep 5m; export DATAPATH=/usr/local/loganalysis/fluentd; python /usr/local/ loganalysis/fluentd/scanner.py
 ```
-It is only necessary to reset the python path if the payload comes with its only python installation. This can probably be better handled with virtual python environments.
+It is only necessary to reset the python path if the payload comes with its own python installation. This can probably be better handled with virtual python environments.
