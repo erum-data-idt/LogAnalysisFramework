@@ -88,7 +88,7 @@ git clone https://github.com/erum-data-idt/LogAnalysisFramework.git
 cd LogAnalysisFramework/
 docker build -t <Docker Hub repository user>/<repository name>:tag .
 ```
-Note the "." at the end of the build command, this points to the Dockerfile in the current folder. A CentOS 7 base image is used to install the framework, which comes with Python version 2.7.5. Given that Python 2 support
+Note the "." at the end of the build command, this points to the Dockerfile in the current folder. A CentOS 7 base image is used to install the framework, which comes with Python version 2.7.5. Given that support for Python 2 ended in January 2021, a migration to Python 3 is needed, either by direct installation or via virtual environments.
 
 # Image repository
 An image generated using the steps listed above is maintained at Docker Hub and can be pulled using the following command:
