@@ -56,7 +56,7 @@ Class definition and methods for implementing queries to Elasticsearch using the
 
 The results of the query can be filtered and stored in an internal dictionary accessed through Validation.python, which returns a python dictionary summary of the filtered query. If Validation.\_msgDetails='WARNING' (default), all structured data records found with logging severity level equal to WARNING or higher are returned. Additionally, it provides two methods that perform simple analyses on the data returned by the queries:
 - Validation.worstError: returns the first record found with highest logging severity level
-- Validation.firstError: returns the first record found above a given logging severity level
+- Validation.firstError: returns the first record found with ERROR logging severity level
 
 Unstructured messages can be be matched to user defined patterns using regular expressions. These example messages can be added to an existing "knowledge" file (nonStandardErrors.db) listing common error messages, e.g., ‘std::bad_alloc’
 ```
