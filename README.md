@@ -129,6 +129,6 @@ Next, the location of the log file needs to be specified in the input plugin blo
 ```
 Finally, the following sequence of commands needs to be added to the original script or command executing the payload
 ```
-unset PYTHONPATH; unset PYTHONHOME; export PATH=/usr/sue/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH; supervisord -c /usr/local/loganalysis/supervisord/etc/ supervisord.conf; sleep 5m; export DATAPATH=/usr/local/loganalysis/fluentd; python /usr/local/loganalysis/fluentd/scanner.py
+unset PYTHONPATH; unset PYTHONHOME; export PATH=/usr/sue/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH; supervisord -c /usr/local/loganalysis/supervisord/etc/supervisord.conf; sleep 5m; export DATAPATH=/usr/local/loganalysis/fluentd; python /usr/local/loganalysis/fluentd/scanner.py
 ```
 It is only necessary to reset the python path if the payload comes with its own python installation. This can probably be better handled with virtual python environments.
